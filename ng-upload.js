@@ -61,6 +61,12 @@ angular.module('ngUpload', [])
                 if (attrs.hasOwnProperty( "uploadOptionBeforeSubmit" ) ) {
                     options.beforeSubmitCallback = attrs.uploadOptionBeforeSubmit;
                 }
+                options.titles = {
+                    startUpload: attrs.hasOwnProperty('uploadOptionsTitle') ? attrs.uploadOptionsTitle : 'Click to start upload.',
+                    wait: attrs.hasOwnProperty('uploadOptionsWaitTitle') ? attrs.uploadOptionsWaitTitle : 'Please wait...',
+                    uploadInProgress: attrs.hasOwnProperty('uploadOptionsUploadInProgressTitle') ? attrs.uploadOptionsUploadInProgressTitle : 'Uploading, please wait...',
+                    displayStatus: attrs.hasOwnProperty('uploadOptionsDisplayStatus') ? attrs.uploadOptionsDisplayStatus : true
+                };
 
                 // submit the form 
                 var form = getParentNodeByTagName(element, 'form');
@@ -129,15 +135,15 @@ angular.module('ngUpload', [])
                             setTimeout(function () { iframe.remove(); }, 250);
                         }
                         element.attr('disabled', null);
-                        element.attr('title', 'Click to start upload.');
+                        element.attr('title', options.titles.startUpload);
                     });
 
                     if (!scope.$$phase) {
                         scope.$apply(function () {
-                            fn(scope, {content: "Please wait...", completed: false });
+                            fn(scope, {content: options.titles.wait, completed: false });
                         });
                     } else {
-                        fn(scope, {content: "Please wait...", completed: false });
+                        fn(scope, {content: options.titles.wait, completed: false });
                     }
 
                     var enabled = true;
@@ -147,7 +153,7 @@ angular.module('ngUpload', [])
                         enabled = false;
                     }
                     // why do we need this???
-                    element.attr('title', (enabled ? '[ENABLED]: ' : '[DISABLED]: ') + 'Uploading, please wait...');
+                    element.attr('title', (options.titles.displayStatus ? (enabled ? '[ENABLED]: ' : '[DISABLED]: ') : '') + options.titles.uploadInProgress);
 
                     // If convertHidden option is enabled, set the value of hidden fields to the eval of the ng-model
                     if (options.convertHidden) {
@@ -163,7 +169,7 @@ angular.module('ngUpload', [])
 
                     form[0].submit();
 
-                }).attr('title', 'Click to start upload.');
+                }).attr('title', options.titles.startUpload);
             }
         };
     }])
