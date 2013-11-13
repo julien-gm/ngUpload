@@ -34,6 +34,12 @@ angular.module('ngUpload', [])
               // }
               var options = {};
               options.enableControls = attrs['uploadOptionsEnableControls'];
+              options.titles = {
+                  startUpload: attrs['uploadOptionsTitle'] ? attrs['uploadOptionsTitle'] : 'Click to start upload.',
+                  wait: attrs['uploadOptionsWaitTitle'] ? attrs['uploadOptionsWaitTitle'] : 'Please wait...',
+                  uploadInProgress: attrs['uploadOptionsUploadInProgressTitle'] ? attrs['uploadOptionsUploadInProgressTitle'] : 'Uploading, please wait...',
+                  displayStatus: attrs['uploadOptionsDisplayStatus'] ? attrs['uploadOptionsDisplayStatus'] : true
+              };
               
               // get scope function to execute on successful form upload
               if (attrs['ngUpload']) {
@@ -77,7 +83,7 @@ angular.module('ngUpload', [])
 
                               //if (options.enableControls == null || !(options.enableControls.length >= 0))
                               submitControl.attr('disabled', null);
-                              submitControl.attr('title', 'Click to start upload.');
+                              submitControl.attr('title', options.titles.startUpload);
                           });
 
                       // add the new iframe to application
@@ -91,7 +97,7 @@ angular.module('ngUpload', [])
 
                           addNewDisposableIframe($(this) /* pass the submit control */);
 
-                          scope.$apply(function () { callbackFn("Please wait...", false /* upload not completed */); });
+                          scope.$apply(function () { callbackFn(options.titles.wait, false /* upload not completed */); });
 
                           //console.log(angular.toJson(options));
 
@@ -102,12 +108,12 @@ angular.module('ngUpload', [])
                               enabled = false;
                           }
 
-                          $(this).attr('title', (enabled ? '[ENABLED]: ' : '[DISABLED]: ') + 'Uploading, please wait...');
+                          $(this).attr('title', (options.titles.displayStatus ? (enabled ? '[ENABLED]: ' : '[DISABLED]: ') : '') + options.titles.uploadInProgress);
 
                           // submit the form
                           $(element).submit();
                       }
-                  ).attr('title', 'Click to start upload.');
+                  ).attr('title', options.titles.startUpload);
               }
               else
                   console.log("No callback function found on the ngUpload directive.");
